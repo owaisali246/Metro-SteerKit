@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useState, useEffect } from 'react';
 import {
     SafeAreaView,
@@ -24,9 +24,14 @@ const MainScreen = (props) => {
     const [locationStatus, setLocationStatus] = useState('');
     const navigation = useNavigation();
     const { width, height } = useWindowDimensions();
+    const route = useRoute();
+    const driver_id = route.params.driver;
 
 
     const onLogout = () => {
+        clearInterval(timer);
+        setLocationStatus("Location Sharing Stopped!");
+        send_coords(0, 0);
         navigation.navigate('LoginScreen');
     }
 
@@ -87,6 +92,7 @@ const MainScreen = (props) => {
         };
 
         var data = {
+            driver_id: driver_id,
             latitude: latitude,
             longitude: longitude
         };
@@ -104,7 +110,7 @@ const MainScreen = (props) => {
     const getLocation = () => {
         Geolocation.getCurrentPosition(
             (position) => {
-                console.log(position.coords.latitude.toFixed(5), position.coords.longitude.toFixed(5));
+                console.log(position.coords.latitude.toFixed(5), position.coords.longitude.toFixed(5), driver_id);
                 setCurrentLongitude(position.coords.longitude.toFixed(5));
                 setCurrentLatitude(position.coords.latitude.toFixed(5));
                 send_coords(currentLatitude, currentLongitude);
@@ -118,7 +124,7 @@ const MainScreen = (props) => {
 
 
     function share_location() {
-        timer = setInterval(getLocation, 5000);
+        timer = setInterval(getLocation, 3000);
         setLocationStatus("Sharing Location...")
     }
     function stop_sharing_loc() {
@@ -159,7 +165,6 @@ const MainScreen = (props) => {
                             <TouchableOpacity onPress={LogoutAlert} style={[styles.button2, styles.elevation, { width: width * 0.8 }]}>
                                 <Text style={styles.btntext}>Logout</Text>
                             </TouchableOpacity>
-                            {/* <Button color={'red'} title="Stop Location Sharing" onPress={stop_sharing_loc} /> */}
                         </View>
                     </View>
                 </View>

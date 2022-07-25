@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainScreen from './src/screens/MainScreen'
@@ -10,8 +10,6 @@ const Stack = createNativeStackNavigator();
 
 
 const App = () => {
-
-
 
   return (
 
@@ -24,13 +22,6 @@ const App = () => {
 
   )
 }
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: "#1a1b18"
-  }
-});
 
 export default App;
 

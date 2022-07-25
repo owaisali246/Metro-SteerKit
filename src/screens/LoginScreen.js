@@ -41,7 +41,9 @@ const LoginScreen = (props) => {
                 [{ text: "OK" }]);
         }
         else if (DriverDetails[DriverId - 1].username === username && DriverDetails[DriverId - 1].password === password) {
-            navigation.navigate('MainScreen');
+            navigation.navigate('MainScreen', {
+                driver: DriverId,
+            });
         }
         else {
             Alert.alert("Invalid Detail", "You have entered an invalid detail!",
