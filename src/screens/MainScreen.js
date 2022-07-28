@@ -15,10 +15,12 @@ import {
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import Marker from '../Assets/Marker.png'
+import { LogBox } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 var timer;
 
-const MainScreen = (props) => {
+const MainScreen = () => {
     const [currentLongitude, setCurrentLongitude] = useState(0.0000);
     const [currentLatitude, setCurrentLatitude] = useState(0.0000);
     const [locationStatus, setLocationStatus] = useState('');
@@ -26,6 +28,12 @@ const MainScreen = (props) => {
     const { width, height } = useWindowDimensions();
     const route = useRoute();
     const driver_id = route.params.driver;
+    const clearDetails = route.params.clearDetails;
+    const setLogin = route.params.setLogin;
+
+    LogBox.ignoreLogs([
+        'Non-serializable values were found in the navigation state',
+    ]);
 
 
     const onLogout = () => {
@@ -33,6 +41,10 @@ const MainScreen = (props) => {
         setLocationStatus("Location Sharing Stopped!");
         send_coords(0, 0);
         navigation.navigate('LoginScreen');
+        clearDetails();
+        AsyncStorage.setItem('LoggedIn', 'true')
+        setLogin('')
+
     }
 
     const LogoutAlert = () =>
@@ -42,7 +54,6 @@ const MainScreen = (props) => {
             [
                 {
                     text: "Cancel",
-                    // onPress: () => console.log("Cancel Pressed"),
                     style: "cancel"
                 },
                 { text: "OK", onPress: onLogout }
@@ -55,7 +66,6 @@ const MainScreen = (props) => {
         const requestLocationPermission = async () => {
             if (Platform.OS === 'ios') {
                 getLocation();
-                // subscribeLocationLocation();
             }
             else {
                 try {
@@ -67,15 +77,11 @@ const MainScreen = (props) => {
                         }
                     );
                     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                        // console.log('permission given')
                         getLocation();
-                        // subscribeLocationLocation();
                     } else {
-                        // console.log('permission denied')
                         setLocationStatus('Permission Denied');
                     }
                 } catch (err) {
-                    // console.log('warning error')
                     alert('Error' + err)
                 }
             }
@@ -153,13 +159,11 @@ const MainScreen = (props) => {
                             <TouchableOpacity onPress={share_location} style={[styles.button1, styles.elevation, { width: width * 0.8 }]}>
                                 <Text style={styles.btntext}>Start Location Sharing</Text>
                             </TouchableOpacity>
-                            {/* <Button color='#03fe86' title="Start Location Sharing" onPress={share_location} /> */}
                         </View>
                         <View style={{ marginTop: 15 }}>
                             <TouchableOpacity onPress={stop_sharing_loc} style={[styles.button2, styles.elevation, { width: width * 0.8 }]}>
                                 <Text style={styles.btntext}>Stop Location Sharing</Text>
                             </TouchableOpacity>
-                            {/* <Button color={'red'} title="Stop Location Sharing" onPress={stop_sharing_loc} /> */}
                         </View>
                         <View style={{ marginTop: 60 }}>
                             <TouchableOpacity onPress={LogoutAlert} style={[styles.button2, styles.elevation, { width: width * 0.8 }]}>
